@@ -1,8 +1,8 @@
 package com.licheedev.myutils;
 
+import android.util.Log;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
-import android.util.Log;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -10,6 +10,8 @@ public class LogPlus {
 
     private static int sCurrentLogLevel = Log.DEBUG;
     private static String sPrefix = null;
+    private static int sOffset = 4;
+    private static ILogger slogger = new DefaultLogger();
 
     @IntDef({ Log.VERBOSE, Log.DEBUG, Log.INFO, Log.WARN, Log.ERROR })
     @Retention(RetentionPolicy.SOURCE)
@@ -17,19 +19,48 @@ public class LogPlus {
     }
 
     /**
-     * 初始化LogPlus，可选
+     * 设置Tag前缀，可以防止 RIL，IMS，AT，GSM，STK，CDMA，SMS 开头的log不会被打印
+     * 参考 <a href="https://stackoverflow.com/questions/36468822/why-does-logcat-not-print-a-log-when-the-tag-starts-with-ims">Why does Logcat not print a log when the tag starts with "IMS"?</a>
      *
-     * @param prefix Tag前缀，可以防止 RIL，IMS，AT，GSM，STK，CDMA，SMS 开头的log不会被打印
-     * @param logLevel 打log等级
+     * @param prefix Tag前缀，
      */
-    public static void init(@Nullable String prefix, @LogLevel int logLevel) {
+    public static void setTagPrefix(@Nullable String prefix) {
         if (prefix != null) {
             prefix = prefix.trim();
             if (prefix.length() > 0) {
                 sPrefix = prefix;
             }
         }
+    }
+
+    /**
+     * 设置打log等级过滤器，log等级≥logLevel的才会打印
+     *
+     * @param logLevel 打log等级
+     */
+    public static void setLogLevelFilter(@LogLevel int logLevel) {
         sCurrentLogLevel = logLevel;
+    }
+
+    /**
+     * 设置从 Thread.currentThread().getStackTrace() 栈中找到打log调用处的offset，默认为4，如果需要在LogPlus外面套一层，则需要修改这个值
+     *
+     * @param offset 默认为4
+     */
+    public static void setInvokedPlaceOffset(int offset) {
+        sOffset = offset;
+    }
+
+    /**
+     * 设置logger实例
+     *
+     * @param logger
+     */
+    public void setLogger(ILogger logger) {
+        if (logger == null) {
+            return;
+        }
+        slogger = logger;
     }
 
     public static void v(@Nullable String tag, String msg, @Nullable Throwable tr) {
@@ -117,7 +148,7 @@ public class LogPlus {
         if (logLevel < sCurrentLogLevel) {
             return;
         }
-        StackTraceElement e = Thread.currentThread().getStackTrace()[4];
+        StackTraceElement e = Thread.currentThread().getStackTrace()[sOffset];
         String fileName = e.getFileName();
         int lineNum = e.getLineNumber();
         String methodName = e.getMethodName();
@@ -132,7 +163,7 @@ public class LogPlus {
             .append(')')
             .append(msg);
 
-        msg = sb.toString();
+        String msgEx = sb.toString();
 
         sb.delete(0, sb.length());
 
@@ -152,6 +183,18 @@ public class LogPlus {
 
         tag = sb.toString();
 
+        slogger.doLog(logLevel, tag, msg, msgEx, tr);
+    }
+
+    /**
+     * 调用 {@link Log} 进行打log
+     *
+     * @param logLevel
+     * @param tag
+     * @param msg
+     * @param tr
+     */
+    public static void invokeAndroidLog(int logLevel, String tag, String msg, Throwable tr) {
         if (tr == null) {
             switch (logLevel) {
                 case Log.VERBOSE:
@@ -188,6 +231,28 @@ public class LogPlus {
                     Log.e(tag, msg, tr);
                     break;
             }
+        }
+    }
+
+    public interface ILogger {
+        /**
+         * 打log
+         *
+         * @param logLevel log等级
+         * @param tag tag
+         * @param msg msg
+         * @param msgEx msg带文件位置
+         * @param tr 异常
+         */
+        void doLog(@LogLevel int logLevel, String tag, String msg, String msgEx,
+            @Nullable Throwable tr);
+    }
+
+    public static class DefaultLogger implements ILogger {
+
+        @Override
+        public void doLog(int logLevel, String tag, String msg, String msgEx, Throwable tr) {
+            invokeAndroidLog(logLevel, tag, msgEx, tr);
         }
     }
 }
