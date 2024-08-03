@@ -2,7 +2,7 @@
 def groupIdDefined = "com.licheedev"
 def artifactIdDefined = "logplus"
 // 如果是测试版，版本号后面加上 -SNAPSHOT
-def versionDefined = "1.0.1"
+def versionDefined = "1.0.2"
 // 其他信息
 def gitUrl = "https://github.com/licheedev/LogPlus"
 def libName = "LogPlus"

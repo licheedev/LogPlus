@@ -63,92 +63,142 @@ public class LogPlus {
         slogger = logger;
     }
 
+    // Log.v
+    public static void v(
+        @Nullable String tag,
+        String msg,
+        @Nullable Throwable tr,
+        int extraOffset
+    ) {
+        log(Log.VERBOSE, tag, msg, tr, extraOffset);
+    }
+
     public static void v(@Nullable String tag, String msg, @Nullable Throwable tr) {
-        log(Log.VERBOSE, tag, msg, tr);
+        log(Log.VERBOSE, tag, msg, tr, 0);
     }
 
     public static void v(@Nullable String tag, String msg) {
-        log(Log.VERBOSE, tag, msg, null);
+        log(Log.VERBOSE, tag, msg, null, 0);
     }
 
     public static void v(String msg, @Nullable Throwable tr) {
-        log(Log.VERBOSE, null, msg, tr);
+        log(Log.VERBOSE, null, msg, tr, 0);
     }
 
     public static void v(String msg) {
-        log(Log.VERBOSE, null, msg, null);
+        log(Log.VERBOSE, null, msg, null, 0);
+    }
+
+    // Log.d
+    public static void d(
+        @Nullable String tag,
+        String msg,
+        @Nullable Throwable tr,
+        int extraOffset
+    ) {
+        log(Log.DEBUG, tag, msg, tr, extraOffset);
     }
 
     public static void d(@Nullable String tag, String msg, @Nullable Throwable tr) {
-        log(Log.DEBUG, tag, msg, tr);
+        log(Log.DEBUG, tag, msg, tr, 0);
     }
 
     public static void d(@Nullable String tag, String msg) {
-        log(Log.DEBUG, tag, msg, null);
+        log(Log.DEBUG, tag, msg, null, 0);
     }
 
     public static void d(String msg, @Nullable Throwable tr) {
-        log(Log.DEBUG, null, msg, tr);
+        log(Log.DEBUG, null, msg, tr, 0);
     }
 
     public static void d(String msg) {
-        log(Log.DEBUG, null, msg, null);
+        log(Log.DEBUG, null, msg, null, 0);
+    }
+
+    // Log.i
+    public static void i(
+        @Nullable String tag,
+        String msg,
+        @Nullable Throwable tr,
+        int extraOffset
+    ) {
+        log(Log.INFO, tag, msg, tr, extraOffset);
     }
 
     public static void i(@Nullable String tag, String msg, @Nullable Throwable tr) {
-        log(Log.INFO, tag, msg, tr);
+        log(Log.INFO, tag, msg, tr, 0);
     }
 
     public static void i(@Nullable String tag, String msg) {
-        log(Log.INFO, tag, msg, null);
+        log(Log.INFO, tag, msg, null, 0);
     }
 
     public static void i(String msg, @Nullable Throwable tr) {
-        log(Log.INFO, null, msg, tr);
+        log(Log.INFO, null, msg, tr, 0);
     }
 
     public static void i(String msg) {
-        log(Log.INFO, null, msg, null);
+        log(Log.INFO, null, msg, null, 0);
+    }
+
+    // Log.w
+    public static void w(
+        @Nullable String tag,
+        String msg,
+        @Nullable Throwable tr,
+        int extraOffset
+    ) {
+        log(Log.WARN, tag, msg, tr, extraOffset);
     }
 
     public static void w(@Nullable String tag, String msg, @Nullable Throwable tr) {
-        log(Log.WARN, tag, msg, tr);
+        log(Log.WARN, tag, msg, tr, 0);
     }
 
     public static void w(@Nullable String tag, String msg) {
-        log(Log.WARN, tag, msg, null);
+        log(Log.WARN, tag, msg, null, 0);
     }
 
     public static void w(String msg, @Nullable Throwable tr) {
-        log(Log.WARN, null, msg, tr);
+        log(Log.WARN, null, msg, tr, 0);
     }
 
     public static void w(String msg) {
-        log(Log.WARN, null, msg, null);
+        log(Log.WARN, null, msg, null, 0);
+    }
+
+    // Log.e
+    public static void e(
+        @Nullable String tag,
+        String msg,
+        @Nullable Throwable tr,
+        int extraOffset
+    ) {
+        log(Log.ERROR, tag, msg, tr, extraOffset);
     }
 
     public static void e(@Nullable String tag, String msg, @Nullable Throwable tr) {
-        log(Log.ERROR, tag, msg, tr);
+        log(Log.ERROR, tag, msg, tr, 0);
     }
 
     public static void e(@Nullable String tag, String msg) {
-        log(Log.ERROR, tag, msg, null);
+        log(Log.ERROR, tag, msg, null, 0);
     }
 
     public static void e(String msg, @Nullable Throwable tr) {
-        log(Log.ERROR, null, msg, tr);
+        log(Log.ERROR, null, msg, tr, 0);
     }
 
     public static void e(String msg) {
-        log(Log.ERROR, null, msg, null);
+        log(Log.ERROR, null, msg, null, 0);
     }
 
-    private static void log(int logLevel, String tag, String msg, Throwable tr) {
+    private static void log(int logLevel, String tag, String msg, Throwable tr, int extraOffset) {
 
         if (logLevel < sCurrentLogLevel) {
             return;
         }
-        StackTraceElement e = Thread.currentThread().getStackTrace()[sOffset];
+        StackTraceElement e = Thread.currentThread().getStackTrace()[sOffset + extraOffset];
         String fileName = e.getFileName();
         int lineNum = e.getLineNumber();
         String methodName = e.getMethodName();
@@ -244,8 +294,10 @@ public class LogPlus {
          * @param msgEx msg带文件位置
          * @param tr 异常
          */
-        void doLog(@LogLevel int logLevel, String tag, String msg, String msgEx,
-            @Nullable Throwable tr);
+        void doLog(
+            @LogLevel int logLevel, String tag, String msg, String msgEx,
+            @Nullable Throwable tr
+        );
     }
 
     public static class DefaultLogger implements ILogger {

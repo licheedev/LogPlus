@@ -9,5 +9,5 @@ allprojects {
 }
 
 
-implementation 'com.licheedev:logplus:1.0.1'
+implementation 'com.licheedev:logplus:1.0.2'
 ```
