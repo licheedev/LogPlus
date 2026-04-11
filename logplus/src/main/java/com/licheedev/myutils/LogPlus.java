@@ -56,7 +56,7 @@ public class LogPlus {
      *
      * @param logger
      */
-    public void setLogger(ILogger logger) {
+    public static void setLogger(ILogger logger) {
         if (logger == null) {
             return;
         }
@@ -64,12 +64,8 @@ public class LogPlus {
     }
 
     // Log.v
-    public static void v(
-        @Nullable String tag,
-        String msg,
-        @Nullable Throwable tr,
-        int extraOffset
-    ) {
+    public static void v(@Nullable String tag, String msg, @Nullable Throwable tr,
+        int extraOffset) {
         log(Log.VERBOSE, tag, msg, tr, extraOffset);
     }
 
@@ -90,12 +86,8 @@ public class LogPlus {
     }
 
     // Log.d
-    public static void d(
-        @Nullable String tag,
-        String msg,
-        @Nullable Throwable tr,
-        int extraOffset
-    ) {
+    public static void d(@Nullable String tag, String msg, @Nullable Throwable tr,
+        int extraOffset) {
         log(Log.DEBUG, tag, msg, tr, extraOffset);
     }
 
@@ -116,12 +108,8 @@ public class LogPlus {
     }
 
     // Log.i
-    public static void i(
-        @Nullable String tag,
-        String msg,
-        @Nullable Throwable tr,
-        int extraOffset
-    ) {
+    public static void i(@Nullable String tag, String msg, @Nullable Throwable tr,
+        int extraOffset) {
         log(Log.INFO, tag, msg, tr, extraOffset);
     }
 
@@ -142,12 +130,8 @@ public class LogPlus {
     }
 
     // Log.w
-    public static void w(
-        @Nullable String tag,
-        String msg,
-        @Nullable Throwable tr,
-        int extraOffset
-    ) {
+    public static void w(@Nullable String tag, String msg, @Nullable Throwable tr,
+        int extraOffset) {
         log(Log.WARN, tag, msg, tr, extraOffset);
     }
 
@@ -168,12 +152,8 @@ public class LogPlus {
     }
 
     // Log.e
-    public static void e(
-        @Nullable String tag,
-        String msg,
-        @Nullable Throwable tr,
-        int extraOffset
-    ) {
+    public static void e(@Nullable String tag, String msg, @Nullable Throwable tr,
+        int extraOffset) {
         log(Log.ERROR, tag, msg, tr, extraOffset);
     }
 
@@ -294,10 +274,8 @@ public class LogPlus {
          * @param msgEx msg带文件位置
          * @param tr 异常
          */
-        void doLog(
-            @LogLevel int logLevel, String tag, String msg, String msgEx,
-            @Nullable Throwable tr
-        );
+        void doLog(@LogLevel int logLevel, String tag, String msg, String msgEx,
+            @Nullable Throwable tr);
     }
 
     public static class DefaultLogger implements ILogger {
